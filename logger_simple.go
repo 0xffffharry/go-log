@@ -68,7 +68,7 @@ func (l *SimpleLogger) sprint(level Level, a ...any) string {
 	message := fmt.Sprint(a...)
 	levelStr := level.String()
 	if cl := l.ColorLayer(); cl != nil {
-		levelStr = cl.Print(levelStr)
+		levelStr = cl.PrintWithColor(level.color(), levelStr)
 	}
 	messageFormat := l.formatFunc(levelStr, message)
 	messageFormat = strings.TrimRightFunc(messageFormat, func(r rune) bool {
@@ -85,7 +85,7 @@ func (l *SimpleLogger) sprintf(level Level, format string, a ...any) string {
 	message := fmt.Sprintf(format, a...)
 	levelStr := level.String()
 	if cl := l.ColorLayer(); cl != nil {
-		levelStr = cl.Print(levelStr)
+		levelStr = cl.PrintWithColor(level.color(), levelStr)
 	}
 	messageFormat := l.formatFunc(levelStr, message)
 	messageFormat = strings.TrimRightFunc(messageFormat, func(r rune) bool {
@@ -102,7 +102,7 @@ func (l *SimpleLogger) print(level Level, a ...any) {
 	message := fmt.Sprint(a...)
 	levelStr := level.String()
 	if cl := l.ColorLayer(); cl != nil {
-		levelStr = cl.Print(levelStr)
+		levelStr = cl.PrintWithColor(level.color(), levelStr)
 	}
 	messageFormat := l.formatFunc(levelStr, message)
 	messageFormat = strings.TrimRightFunc(messageFormat, func(r rune) bool {
@@ -135,7 +135,7 @@ func (l *SimpleLogger) printf(level Level, format string, a ...any) {
 	message := fmt.Sprintf(format, a...)
 	levelStr := level.String()
 	if cl := l.ColorLayer(); cl != nil {
-		levelStr = cl.Print(levelStr)
+		levelStr = cl.PrintWithColor(level.color(), levelStr)
 	}
 	messageFormat := l.formatFunc(levelStr, message)
 	messageFormat = strings.TrimRightFunc(messageFormat, func(r rune) bool {

@@ -47,3 +47,17 @@ func (l *colorLayer) Print(str string) string {
 	}
 	return str
 }
+
+func (l *colorLayer) PrintWithColor(color color.Attribute, str string) string {
+	if l.status {
+		if color > 0 {
+			return NewColor(color).Sprint(str)
+		}
+		if l.color != nil {
+			return l.color.Sprint(str)
+		} else {
+			return str
+		}
+	}
+	return str
+}

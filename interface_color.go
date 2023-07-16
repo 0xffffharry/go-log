@@ -8,7 +8,8 @@ type ColorLayer interface {
 	DisableColor()
 	SetColor(c color.Attribute)
 	GetColor() color.Attribute
-	Print(message string) string
+	Print(str string) string
+	PrintWithColor(color color.Attribute, str string) string
 }
 
 type ColorLogger interface {
