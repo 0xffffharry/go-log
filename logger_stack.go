@@ -11,6 +11,8 @@ type stackLogger struct {
 	rootLogger Logger
 	skip       int
 
+	colorLayer ColorLayer
+
 	Logger
 }
 
@@ -26,7 +28,11 @@ func NewStackLogger(rootLogger Logger) Logger {
 func (l *stackLogger) print(level Level, a ...any) {
 	_, file, line, ok := runtime.Caller(l.skip)
 	if ok {
-		_a := []any{fmt.Sprintf("[%s:%d] ", filepath.Base(file), line)}
+		str := fmt.Sprintf("%s:%d", filepath.Base(file), line)
+		if l.colorLayer != nil {
+			str = l.colorLayer.Print(str)
+		}
+		_a := []any{fmt.Sprintf("[%s] ", str)}
 		_a = append(_a, a...)
 		a = _a
 	}
@@ -36,7 +42,11 @@ func (l *stackLogger) print(level Level, a ...any) {
 func (l *stackLogger) printf(level Level, format string, a ...any) {
 	_, file, line, ok := runtime.Caller(l.skip)
 	if ok {
-		format = fmt.Sprintf("[%s:%d] %s", filepath.Base(file), line, format)
+		str := fmt.Sprintf("%s:%d", filepath.Base(file), line)
+		if l.colorLayer != nil {
+			str = l.colorLayer.Print(str)
+		}
+		format = fmt.Sprintf("[%s] %s", str, format)
 	}
 	l.rootLogger.printf(level, format, a...)
 }
@@ -44,7 +54,11 @@ func (l *stackLogger) printf(level Level, format string, a ...any) {
 func (l *stackLogger) sprint(level Level, a ...any) string {
 	_, file, line, ok := runtime.Caller(l.skip)
 	if ok {
-		_a := []any{fmt.Sprintf("[%s:%d] ", filepath.Base(file), line)}
+		str := fmt.Sprintf("%s:%d", filepath.Base(file), line)
+		if l.colorLayer != nil {
+			str = l.colorLayer.Print(str)
+		}
+		_a := []any{fmt.Sprintf("[%s] ", str)}
 		_a = append(_a, a...)
 		a = _a
 	}
@@ -54,7 +68,11 @@ func (l *stackLogger) sprint(level Level, a ...any) string {
 func (l *stackLogger) sprintf(level Level, format string, a ...any) string {
 	_, file, line, ok := runtime.Caller(l.skip)
 	if ok {
-		format = fmt.Sprintf("[%s:%d] %s", filepath.Base(file), line, format)
+		str := fmt.Sprintf("%s:%d", filepath.Base(file), line)
+		if l.colorLayer != nil {
+			str = l.colorLayer.Print(str)
+		}
+		format = fmt.Sprintf("[%s] %s", str, format)
 	}
 	return l.rootLogger.sprintf(level, format, a...)
 }
@@ -63,9 +81,21 @@ func (l *stackLogger) RootLogger() Logger {
 	return l.rootLogger
 }
 
+func (l *stackLogger) InitColor() {
+	if l.colorLayer == nil {
+		l.colorLayer = newColorLayer()
+	}
+}
+
+func (l *stackLogger) ColorLayer() ColorLayer {
+	return l.colorLayer
+}
+
 type stackContextLogger struct {
 	rootContextLogger ContextLogger
 	skip              int
+
+	colorLayer ColorLayer
 
 	ContextLogger
 }
@@ -82,7 +112,11 @@ func NewStackContextLogger(rootContextLogger ContextLogger) ContextLogger {
 func (l *stackContextLogger) printContext(ctx context.Context, level Level, a ...any) {
 	_, file, line, ok := runtime.Caller(l.skip)
 	if ok {
-		_a := []any{fmt.Sprintf("[%s:%d] ", filepath.Base(file), line)}
+		str := fmt.Sprintf("%s:%d", filepath.Base(file), line)
+		if l.colorLayer != nil {
+			str = l.colorLayer.Print(str)
+		}
+		_a := []any{fmt.Sprintf("[%s] ", str)}
 		_a = append(_a, a...)
 		a = _a
 	}
@@ -92,7 +126,11 @@ func (l *stackContextLogger) printContext(ctx context.Context, level Level, a ..
 func (l *stackContextLogger) printfContext(ctx context.Context, level Level, format string, a ...any) {
 	_, file, line, ok := runtime.Caller(l.skip)
 	if ok {
-		format = fmt.Sprintf("[%s:%d] %s", filepath.Base(file), line, format)
+		str := fmt.Sprintf("%s:%d", filepath.Base(file), line)
+		if l.colorLayer != nil {
+			str = l.colorLayer.Print(str)
+		}
+		format = fmt.Sprintf("[%s] %s", str, format)
 	}
 	l.rootContextLogger.printfContext(ctx, level, format, a...)
 }
@@ -100,7 +138,11 @@ func (l *stackContextLogger) printfContext(ctx context.Context, level Level, for
 func (l *stackContextLogger) sprintContext(ctx context.Context, level Level, a ...any) string {
 	_, file, line, ok := runtime.Caller(l.skip)
 	if ok {
-		_a := []any{fmt.Sprintf("[%s:%d] ", filepath.Base(file), line)}
+		str := fmt.Sprintf("%s:%d", filepath.Base(file), line)
+		if l.colorLayer != nil {
+			str = l.colorLayer.Print(str)
+		}
+		_a := []any{fmt.Sprintf("[%s] ", str)}
 		_a = append(_a, a...)
 		a = _a
 	}
@@ -110,7 +152,11 @@ func (l *stackContextLogger) sprintContext(ctx context.Context, level Level, a .
 func (l *stackContextLogger) sprintfContext(ctx context.Context, level Level, format string, a ...any) string {
 	_, file, line, ok := runtime.Caller(l.skip)
 	if ok {
-		format = fmt.Sprintf("[%s:%d] %s", filepath.Base(file), line, format)
+		str := fmt.Sprintf("%s:%d", filepath.Base(file), line)
+		if l.colorLayer != nil {
+			str = l.colorLayer.Print(str)
+		}
+		format = fmt.Sprintf("[%s] %s", str, format)
 	}
 	return l.rootContextLogger.sprintfContext(ctx, level, format, a...)
 }
@@ -124,4 +170,14 @@ func (l *stackContextLogger) RootLogger() Logger {
 
 func (l *stackContextLogger) RootContextLogger() ContextLogger {
 	return l.rootContextLogger
+}
+
+func (l *stackContextLogger) InitColor() {
+	if l.colorLayer == nil {
+		l.colorLayer = newColorLayer()
+	}
+}
+
+func (l *stackContextLogger) ColorLayer() ColorLayer {
+	return l.colorLayer
 }
